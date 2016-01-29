@@ -92,11 +92,14 @@ An example for go-mode:
 
     (commenter-setup)))")
 
+(defvar commenter--already-called nil)
+
 (defun commenter-vars-setup (&rest _args)
   "Dynamically change comment-xxx variables.
 This function is used as advice to ‘comment-normalize-vars’."
+  (setq commenter--already-called t)
   (let ((config commenter-config))
-    (if (not config)
+    (if (or (not config) commenter--already-called)
         nil ; don’t bother other modes
       (let* ((ppss (save-excursion ; <- not sure why this is needed
                      (syntax-ppss  ; but without this, multi line comment
@@ -161,7 +164,13 @@ This function is used as advice to ‘comment-normalize-vars’."
 ;;;###autoload
 (defun commenter-setup ()
   "Add advises to ‘comment-normalize-vars’."
-  (advice-add 'comment-normalize-vars :before 'commenter-vars-setup))
+  (advice-add 'comment-normalize-vars :before 'commenter-vars-setup)
+  (advice-add 'fill-paragraph :before 'commenter-vars-setup))
+
+(defun commenter-reset ()
+  (setq commenter--already-called nil))
+
+(add-hook 'post-command-hook 'commenter-reset)
 
 (provide 'commenter)
 
