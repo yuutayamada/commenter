@@ -97,7 +97,6 @@ An example for go-mode:
 (defun commenter-vars-setup (&rest _args)
   "Dynamically change comment-xxx variables.
 This function is used as advice to ‘comment-normalize-vars’."
-  (setq commenter--already-called t)
   (let ((config commenter-config))
     (if (or (not config) commenter--already-called)
         nil ; don’t bother other modes
@@ -149,7 +148,8 @@ This function is used as advice to ‘comment-normalize-vars’."
           ;; Default variable is ’undecided, so use default
           ;; value instead of nil if user doesn’t set.
           (setq-local comment-use-syntax
-                      (or .comment-use-syntax comment-use-syntax)))))))
+                      (or .comment-use-syntax comment-use-syntax)))))
+    (setq commenter--already-called t)))
 
 (defun commenter-multiline-comment-p (ppss config)
   (let-alist config
