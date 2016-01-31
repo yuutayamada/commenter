@@ -136,12 +136,12 @@ This function is used as advice to ‘comment-normalize-vars’."
           (setq-local comment-end-skip   .comment-end-skip)
           ;; This value affects M-j’s behavior
           (setq-local comment-multi-line .comment-multi-line)
-          ;; This variable is for multiline comment
+          ;; This variable is for multiline comment.
+          ;; Please make sure this variable is including non space
+          ;; character, otherwise ‘uncomment-region’ doesn’t work
+          ;; correctly. (probably)
           (setq-local comment-continue
-                      (when (and comment-multi-line
-                                 ;; When you uncomment, this variable
-                                 ;; should not set.
-                                 (not (nth 4 ppss)))
+                      (when comment-multi-line
                         .comment-continue))
           ;; 1 is default
           (setq-local comment-padding (or .comment-padding 1))
